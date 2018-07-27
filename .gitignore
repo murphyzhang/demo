@@ -1,0 +1,7 @@
+.idea/
+.git/
+*.iml
+build
+out
+*.class
+classes
