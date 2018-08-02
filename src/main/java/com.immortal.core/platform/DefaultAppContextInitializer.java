@@ -10,6 +10,10 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import java.io.IOException;
 
 public class DefaultAppContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+    /**
+     * 初始化应用程序给定的上下文
+     * @param context
+     */
     public void initialize(ConfigurableApplicationContext context) {
         try {
             //setIgnoreUnresolvableNestedPlaceholders遇到不可解析占位符时是否抛出异常, false抛出异常, true不抛异常继续传递
