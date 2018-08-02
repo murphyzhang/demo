@@ -1,11 +1,14 @@
 package com.immortal.core.platform;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -30,6 +33,30 @@ public abstract class WebAbstractConfig extends WebMvcConfigurerAdapter implemen
         parameters.put(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM, DefaultAppContextInitializer.class.getName());
         dispatcher.setInitParameters(parameters);
         dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/");
+        dispatcher.addMapping("/", "*.html");
     }
+
+    /**
+     * 静态资源处理
+     * 把"/**"请求注册到SimpleUrlHandlerMapping的urlMap中
+     * 等同于xml配置<mvc:default-servlet-handler/>
+     * @param configurer
+     */
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Bean
+    public FreeMarkerConfigurer freeMarkerConfigurer() {
+        FreeMarkerConfigurer config = new FreeMarkerConfigurer();
+        return config;
+    }
+
+    /*public void configureViewResolvers(ViewResolverRegistry registry) {
+        FreeMarkerViewResolver freeMarkerViewResolver = new FreeMarkerViewResolver();
+        freeMarkerViewResolver.setPrefix("/WEB-INF/template/");
+        freeMarkerViewResolver.setSuffix(".ftl");
+        registry.viewResolver(freeMarkerViewResolver);
+    }*/
 }
