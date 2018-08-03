@@ -1,5 +1,6 @@
 package com.immortal.core.platform;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -8,11 +9,15 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * SpringServletContainerInitializer
@@ -33,6 +38,42 @@ public abstract class WebAbstractConfig extends WebMvcConfigurerAdapter implemen
         dispatcher.setInitParameters(parameters);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
+    }
+
+    /**
+     * 注入freemarker配置类
+     * FreeMarkerConfigurer父类FreeMarkerConfigurationFactory依赖于spring-context-support.jar
+     * 缺少spring-context-support.jar依赖将无法设置freemarker启动参数
+     * @return
+     */
+    @Bean
+    public FreeMarkerConfigurer freeMarkerConfigurer() {
+        FreeMarkerConfigurer config = new FreeMarkerConfigurer();
+        //指定视图路径前缀
+        config.setTemplateLoaderPath("/WEB-INF/freemarker/");
+        //设置freemarker解析器编码
+        Properties properties = new Properties();
+        properties.setProperty("defaultEncoding", "UTF-8");
+        config.setFreemarkerSettings(properties);
+        return config;
+    }
+
+    /**
+     * 注入freemarker视图解析器
+     * setContentType: 配置视图内容编码类型
+     * setViewClass: 配置解析器类型
+     * setCache: 开启视图缓存
+     * setSuffix: 设置视图后缀
+     * @return
+     */
+    @Bean
+    public FreeMarkerViewResolver freeMarkerViewResolver() {
+        FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
+        resolver.setContentType("text/html;charset=UTF-8");
+        resolver.setViewClass(FreeMarkerView.class);
+        resolver.setCache(true);
+        resolver.setSuffix(".ftl");
+        return resolver;
     }
 
     /**

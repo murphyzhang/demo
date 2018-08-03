@@ -6,8 +6,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import java.util.Properties;
 
@@ -16,39 +14,19 @@ import java.util.Properties;
 public class WebConfig extends WebAbstractConfig {
 
     /**
-     * 注入freemarker配置类
-     * FreeMarkerConfigurer父类FreeMarkerConfigurationFactory依赖于spring-context-support.jar
-     * 缺少spring-context-support.jar依赖将无法设置freemarker启动参数
+     * 覆盖父类同名Bean
      * @return
      */
     @Bean
     public FreeMarkerConfigurer freeMarkerConfigurer() {
         FreeMarkerConfigurer config = new FreeMarkerConfigurer();
         //指定视图路径前缀
-        config.setTemplateLoaderPath("/WEB-INF/freemarker/");
+        config.setTemplateLoaderPath("/WEB-INF/template/");
         //设置freemarker解析器编码
         Properties properties = new Properties();
         properties.setProperty("defaultEncoding", "UTF-8");
         config.setFreemarkerSettings(properties);
         return config;
-    }
-
-    /**
-     * 注入freemarker视图解析器
-     * setContentType: 配置视图内容编码类型
-     * setViewClass: 配置解析器类型
-     * setCache: 开启视图缓存
-     * setSuffix: 设置视图后缀
-     * @return
-     */
-    @Bean
-    public FreeMarkerViewResolver freeMarkerViewResolver() {
-        FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
-        resolver.setContentType("text/html;charset=UTF-8");
-        resolver.setViewClass(FreeMarkerView.class);
-        resolver.setCache(true);
-        resolver.setSuffix(".ftl");
-        return resolver;
     }
 
     /**
@@ -58,6 +36,6 @@ public class WebConfig extends WebAbstractConfig {
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/index").setViewName("index");
+        registry.addViewController("/").setViewName("index");
     }
 }
