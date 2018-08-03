@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import java.util.Properties;
@@ -34,23 +35,25 @@ public class WebConfig extends WebAbstractConfig {
 
     /**
      * 注入freemarker视图解析器
+     * setContentType: 配置视图内容编码类型
+     * setViewClass: 配置解析器类型
+     * setCache: 开启视图缓存
+     * setSuffix: 设置视图后缀
      * @return
      */
     @Bean
     public FreeMarkerViewResolver freeMarkerViewResolver() {
         FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
-        //配置视图内容编码类型
         resolver.setContentType("text/html;charset=UTF-8");
-        //开启视图缓存
+        resolver.setViewClass(FreeMarkerView.class);
         resolver.setCache(true);
-        //设置视图后缀
         resolver.setSuffix(".ftl");
         return resolver;
     }
 
     /**
      * 注册通用的请求到视图映射
-     * ${domain}/直接返回${domain}/WEB-INF/template/index.ftl
+     * ${domain}/直接返回${domain}/WEB-INF/freemarker/index.ftl
      * @param registry
      */
     @Override
