@@ -1,14 +1,13 @@
 package com.immortal.core.platform;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -33,13 +32,15 @@ public abstract class WebAbstractConfig extends WebMvcConfigurerAdapter implemen
         parameters.put(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM, DefaultAppContextInitializer.class.getName());
         dispatcher.setInitParameters(parameters);
         dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/", "*.html");
+        dispatcher.addMapping("/");
     }
 
     /**
      * 静态资源处理
      * 把"/**"请求注册到SimpleUrlHandlerMapping的urlMap中
      * 等同于xml配置<mvc:default-servlet-handler/>
+     *
+     * DispatcherServlet设置mapping("/")几乎拦截所有请求, 破坏了servlet一个特性(根目录下的文件可以直接访问), DefaultServletHandlerConfigurer帮助回归该特性
      * @param configurer
      */
     @Override
@@ -47,16 +48,14 @@ public abstract class WebAbstractConfig extends WebMvcConfigurerAdapter implemen
         configurer.enable();
     }
 
-    @Bean
-    public FreeMarkerConfigurer freeMarkerConfigurer() {
-        FreeMarkerConfigurer config = new FreeMarkerConfigurer();
-        return config;
+    /**
+     * 注册Handler处理静态资源重定向
+     * eg:
+     * 当请求http://localhost:5200/demo/html/vue/index.html时, 会把http://localhost:5200/demo/WEB-INF/html/vue/index.html返回
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/html/**").addResourceLocations("/WEB-INF/html/");
     }
-
-    /*public void configureViewResolvers(ViewResolverRegistry registry) {
-        FreeMarkerViewResolver freeMarkerViewResolver = new FreeMarkerViewResolver();
-        freeMarkerViewResolver.setPrefix("/WEB-INF/template/");
-        freeMarkerViewResolver.setSuffix(".ftl");
-        registry.viewResolver(freeMarkerViewResolver);
-    }*/
 }
