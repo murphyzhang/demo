@@ -92,7 +92,7 @@ public abstract class WebAbstractConfig extends WebMvcConfigurerAdapter implemen
     /**
      * 注册Handler处理静态资源重定向
      * eg:
-     * 当请求http://localhost:5200/demo/html/vue/index.html时, 会把http://localhost:5200/demo/WEB-INF/html/vue/index.html返回
+     * 当请求http://localhost:5200/demo/html/vue/index.html时, 返回http://localhost:5200/demo/WEB-INF/html/vue/index.html
      * @param registry
      */
     @Override
